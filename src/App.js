@@ -17,7 +17,7 @@ class App extends Component {
       <div className="App">
         <Navbar dark color="primary">
           <div className="container">
-            <NavbarBrand href="/">Test</NavbarBrand>
+            <NavbarBrand href="/">Restaurant</NavbarBrand>
           </div>
         </Navbar>
         <Menu dishes={this.state.dishes}/>
