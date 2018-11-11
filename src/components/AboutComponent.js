@@ -27,13 +27,15 @@ function About(props) {
       );
   }else
         return (
+          <Fade in key={leader.id}>
             <RenderLeader leader={leader} key={leader.id}/>
+          </Fade>
         );
     });
 
     function RenderLeader({leader}) {
         return (
-          <Fade in>
+          
               <Media className="mb-3">
                 <Media left href="#"  className="mr-5">
                   <Media object src={baseUrl + leader.image} alt={leader.name} />
@@ -46,7 +48,7 @@ function About(props) {
                   {leader.description}                
                 </Media>
               </Media>
-          </Fade>
+          
         )
     }
 
