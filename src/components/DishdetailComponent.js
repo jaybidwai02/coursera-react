@@ -17,6 +17,8 @@ import {
   Label } from 'reactstrap';
 import { Control, LocalForm, Errors } from 'react-redux-form';
 import { Link } from 'react-router-dom';
+import { Loading } from './LoadingComponent';
+import { baseUrl } from '../shared/baseUrl';
 
 const required = (val) => val && val.length;
 const maxLength = (len) => (val) => !(val) || (val.length <= len);
@@ -33,11 +35,11 @@ class CommentForm extends Component {
     this.state = {
         isModalOpen: false,
         dropdownOpen: false,
-        name: '',
+        author: '',
         rating: '',
         comment: '',
         touched: {
-          name: false,
+          author: false,
           rating: false,
           comment: false
         }
@@ -45,9 +47,9 @@ class CommentForm extends Component {
   }
 
   handleSubmit(values) {
-     console.log('Current State is: ' + JSON.stringify(values));
-     alert('Current State is: ' + JSON.stringify(values));
-     // event.preventDefault();
+     // this.props.addComment(this.props.dishId, values.rating, values.author, values.comment);
+     this.props.postComment(this.props.dishId, values.rating, values.author, values.comment);
+     this.toggleModal();
  }
 
   toggleModal() {
@@ -80,7 +82,7 @@ class CommentForm extends Component {
 
                 <FormGroup>
                   <Label htmlFor="name">Your Name</Label>
-                  <Control.text model=".name" id="name" name="name"
+                  <Control.text model=".author" id="naauthorme" name="author"
                     placeholder="Your Name"
                     className="form-control"
                     validators={{
@@ -89,7 +91,7 @@ class CommentForm extends Component {
                      />
                   <Errors
                     className="text-danger"
-                    model=".name"
+                    model=".author"
                     show="touched"
                     messages={{
                         minLength: 'Must be greater than 2 characters',
@@ -115,10 +117,10 @@ class CommentForm extends Component {
 };
 
 const RenderDish = ({dish}) => {
-    if (dish != null) {
+ if (dish != null) {
       return (
         <Card>
-          <CardImg top src={dish.image} alt={dish.name} />
+          CardImg top src={baseUrl + dish.image} alt={dish.name} />
           <CardBody>
             <CardTitle>{dish.name}</CardTitle>
             <CardText>{dish.description}</CardText>
@@ -132,7 +134,7 @@ const RenderDish = ({dish}) => {
     }
   }
 
-  const RenderComments = ({comments}) => {
+  const RenderComments = ({comments, dishId, addComment,postComment}) => {
     if (comments != null) {
       return (
         <div>
@@ -153,7 +155,7 @@ const RenderDish = ({dish}) => {
               );
             })}
           </ul>
-          <CommentForm />
+           <CommentForm dishId={dishId} addComment={addComment} postComment={postComment}/>
         </div>
       );
     } else {
@@ -164,7 +166,24 @@ const RenderDish = ({dish}) => {
   }
 
 const DishDetail = (props) => {
-	if (props.dish != null) {
+  if (props.isLoading) {
+      return(
+          <div className="container">
+              <div className="row">            
+                  <Loading />
+              </div>
+          </div>
+      );
+  }
+  else if (props.errMess) {
+      return(
+          <div className="container">
+              <div className="row">            
+                  <h4>{props.errMess}</h4>
+              </div>
+          </div>
+      );
+  }else if (props.dish != null) {
 	  return (
           <div className="container">
           <div className="row">
@@ -183,7 +202,11 @@ const DishDetail = (props) => {
                   <RenderDish dish={props.dish} />
               </div>
               <div className="col-12 col-md-5 m-1">
-                  <RenderComments comments={props.comments} />
+                  <RenderComments comments={props.comments}
+                    addComment={props.addComment}
+                    dishId={props.dish.id}
+                    postComment={props.postComment}
+                  />
               </div>
           </div>
           </div>
